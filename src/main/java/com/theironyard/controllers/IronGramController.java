@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -103,6 +104,17 @@ public class IronGramController {
             throw new Exception("Not logged in.");
         }
         User user = users.findOneByUsername(username);
+        List<Photo> photoList = photos.findByReceiver(user);
+        for (Photo p : photoList){
+            if (p.accesstime == null){
+                p.accesstime = LocalDateTime.now();
+                photos.save(p);
+            }
+            else if (p.accesstime.isBefore(LocalDateTime.now().minusSeconds(10))){
+                photos.delete(p);
+                File f = new File("public", p.filename);
+            }
+        }
         return photos.findByReceiver(user);
     }
 }

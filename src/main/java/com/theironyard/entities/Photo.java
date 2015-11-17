@@ -1,6 +1,7 @@
 package com.theironyard.entities;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Created by cameronoakley on 11/17/15.
@@ -21,4 +22,6 @@ public class Photo {
 
     @Column(nullable = false)
     public String filename;
+
+    public LocalDateTime accesstime;
 }
