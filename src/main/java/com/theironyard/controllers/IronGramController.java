@@ -114,6 +114,7 @@ public class IronGramController {
             if (p.accesstime == null){
                 p.accesstime = LocalDateTime.now();
                 photos.save(p);
+                //waitToDelete(p , 10);
             }
             else if (p.accesstime.isBefore(LocalDateTime.now().minusSeconds(10))){
                 photos.delete(p);
@@ -122,4 +123,18 @@ public class IronGramController {
         }
         return photos.findByReceiver(user);
     }
+
+    /*public void waitToDelete(Photo photo, int seconds){     //delete by thread
+        Thread t = new Thread(() -> {
+            try {
+                Thread.sleep(seconds * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            photos.delete(photo);
+            File f = new File("public", photo.filename);
+            f.delete();
+        });
+        t.start();
+    }*/
 }
