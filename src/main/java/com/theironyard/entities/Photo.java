@@ -24,4 +24,10 @@ public class Photo {
     public String filename;
 
     public LocalDateTime accesstime;
+
+    @Column(nullable = false)
+    public int deleteSeconds;
+
+    @Column(nullable = false)
+    public boolean isPublic;
 }

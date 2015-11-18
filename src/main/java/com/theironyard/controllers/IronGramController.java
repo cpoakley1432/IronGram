@@ -7,6 +7,7 @@ import com.theironyard.services.PhotoRepository;
 import com.theironyard.services.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,7 +71,10 @@ public class IronGramController {
             HttpSession session,
             HttpServletResponse response,
             String receiver,
-            MultipartFile photo
+            MultipartFile photo,
+            @RequestParam(defaultValue = "0") int deleteSeconds,
+            boolean isPublic
+
     ) throws Exception {
         String username = (String) session.getAttribute("username");
         if (username == null){
@@ -95,6 +99,7 @@ public class IronGramController {
         p.sender = senderUser;
         p.receiver = receiverUser;
         p.filename = photoFile.getName();
+        p.deleteSeconds = deleteSeconds;
         photos.save(p);
 
         response.sendRedirect("/");
@@ -116,9 +121,10 @@ public class IronGramController {
                 photos.save(p);
                 //waitToDelete(p , 10);
             }
-            else if (p.accesstime.isBefore(LocalDateTime.now().minusSeconds(10))){
+            else if (p.accesstime.isBefore(LocalDateTime.now().minusSeconds(p.deleteSeconds))){
                 photos.delete(p);
                 File f = new File("public", p.filename);
+                f.delete();
             }
         }
         return photos.findByReceiver(user);
